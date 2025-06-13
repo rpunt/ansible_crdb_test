@@ -1,0 +1,52 @@
+# Ansible specific
+*.retry
+*.pyc
+__pycache__/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Temporary files
+*~
+*.swp
+*.swo
+
+# Collection build artifacts
+*.tar.gz
+
+# Local collection development
+collections/ansible_collections/
+
+# Environment variables and sensitive data
+.env
+.vault_pass
+vault_pass.txt
+*.vault
+
+# OS specific files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE specific files
+.idea/
+.vscode/
+*.code-workspace
+.project
+.pydevproject
+*.sublime-project
+*.sublime-workspace
+
+# Virtual environments
+venv/
+env/
+.venv/
+.env/
+.virtualenv/
+
+# Logs
+*.log
