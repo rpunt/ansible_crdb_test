@@ -1,0 +1,40 @@
+---
+# CockroachDB Setup-specific Variables
+# Variables used specifically for database setup tasks
+
+# Database Configuration
+setup_database_name: mydatabase
+setup_user_name: myuser
+# setup_user_password: "securepassword"  # Consider using ansible-vault for passwords
+
+# Database Privileges
+setup_privileges: ["ALL"]
+
+# Cluster Parameters
+cluster_parameters:
+  sql.defaults.distsql: 'on'
+  sql.defaults.vectorize: 'on'
+  sql.distsql.temp_storage.workmem: '1GiB'
+  kv.snapshot_rebalance.max_rate: '64MiB'
+  kv.bulk_io_write.concurrent_addsstable_requests: 10
+  kv.bulk_io_write.max_rate: '512MiB'
+
+# Profile selection
+revenue: revenue  # Options: revenue, task_service, or any custom profile name
+
+# Cluster parameter profiles
+cockroach_profiles:
+  revenue:
+    sql.defaults.distsql: 'on'
+    sql.defaults.vectorize: 'on'
+    sql.distsql.temp_storage.workmem: '1GiB'
+    kv.snapshot_rebalance.max_rate: '64MiB'
+    kv.bulk_io_write.concurrent_addsstable_requests: 10
+    kv.bulk_io_write.max_rate: '512MiB'
+  task_service:
+    sql.defaults.distsql: 'on'
+    sql.defaults.vectorize: 'on'
+    sql.distsql.temp_storage.workmem: '512MiB'
+    kv.snapshot_rebalance.max_rate: '32MiB'
+    kv.bulk_io_write.concurrent_addsstable_requests: 5
+    kv.bulk_io_write.max_rate: '256MiB'

@@ -1,0 +1,25 @@
+---
+# Production Environment Variables
+# Override common variables for production environment
+
+# Production-specific overrides
+crdb_cluster_name: "prod-crdb-cluster"
+crdb_secure_mode: "require"  # Enable security for production
+
+# Production database names
+setup_database_name: production_database
+setup_user_name: prod_user
+
+# Production-specific parameters (optimized for performance)
+cluster_parameters:
+  sql.defaults.distsql: 'on'
+  sql.defaults.vectorize: 'on'
+  sql.distsql.temp_storage.workmem: '2GiB'    # More memory for prod
+  kv.snapshot_rebalance.max_rate: '128MiB'    # Higher rate for prod
+  kv.bulk_io_write.concurrent_addsstable_requests: 20  # More concurrent requests
+  kv.bulk_io_write.max_rate: '1GiB'           # Higher rate for prod
+
+# Production security settings
+# crdb_certs_dir: "/opt/cockroach/certs"
+# crdb_data_dir: "/opt/cockroach/data"
+# crdb_log_dir: "/var/log/cockroach"

@@ -1,45 +1,33 @@
 ---
-- name: CockroachDB Setup and Management
+- name: CockroachDB Query and Testing
   hosts: crdb_servers
   gather_facts: true
   become: false  # Set to true if you need privilege escalation
 
-  vars:
-    crdb_version: "latest"  # You can specify a specific version like "22.2.0"
-    crdb_cluster_name: "my-crdb-cluster"
-    crdb_secure_mode: "disable"  # Set to true for TLS/SSL security
-    crdb_listen_port: 26257
-    crdb_http_port: 8080
-    # crdb_join_addrs: []  # Empty for single node, add IPs for multi-node
-    # crdb_locality: "region=us-east,datacenter=dc1"
-    # crdb_certs_dir: "/var/lib/cockroach/certs"
-    # crdb_data_dir: "/var/lib/cockroach/data"
-    # crdb_log_dir: "/var/log/cockroach"
-    test_db: testdb
-    test_user: testuser
-    test_pwd: testpassword
-    test_table: users
-    test_index: idx_users_name
+  vars_files:
+    - vars/crdb_common.yml
+    - vars/crdb_query.yml
+    # Uncomment the appropriate environment file:
+    - vars/environments/dev.yml
+    # - vars/environments/prod.yml
 
   tasks:
     # Basic connectivity and version check
     - name: Wait for CockroachDB to become available
       ansible.builtin.wait_for:
         port: "{{ crdb_listen_port }}"
-        delay: 10
-        timeout: 60
+        delay: "{{ crdb_wait_delay }}"
+        timeout: "{{ crdb_wait_timeout }}"
 
     - name: Execute SQL statements
       cockroach_labs.cockroachdb.cockroachdb_query:
-        host: localhost
-        # port: "{{ crdb_listen_port }}"
+        host: "{{ crdb_host }}"
         ssl_mode: "{{ crdb_secure_mode }}"
-        database: mydatabase
+        database: "{{ query_database_name }}"
         query: |
-          CREATE TABLE IF NOT EXISTS mydatabase.mytable (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), name STRING, created_at TIMESTAMPTZ DEFAULT now());
-          INSERT INTO mydatabase.mytable (name) VALUES ('test_record');
-          select * from mydatabase.mytable;
-        # certs_dir: "{{ crdb_certs_dir if crdb_secure_mode else omit }}"
+          {{ sample_queries.create_table }}
+          {{ sample_queries.insert_sample }}
+          {{ sample_queries.select_all }}
       register: sql_result
 
     - name: Display SQL execution result

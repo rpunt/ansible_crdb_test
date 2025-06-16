@@ -1,0 +1,10 @@
+---
+# Group variables for crdb_servers
+# These variables apply to all hosts in the crdb_servers group
+
+# Override common settings for this group if needed
+# crdb_host: "{{ ansible_host | default('localhost') }}"
+# crdb_listen_port: 26257
+
+# Group-specific database settings
+# setup_database_name: "{{ inventory_hostname }}_database"

@@ -1,0 +1,30 @@
+---
+# CockroachDB Query/Testing Variables
+# Variables used for testing and querying operations
+
+# Test Database Configuration
+test_db: testdb
+test_user: testuser
+test_pwd: testpassword
+test_table: users
+test_index: idx_users_name
+
+# Query Database (should match setup database for consistency)
+query_database_name: mydatabase
+query_table_name: mytable
+
+# Sample SQL Queries
+sample_queries:
+  create_table: |
+    CREATE TABLE IF NOT EXISTS {{ query_database_name }}.{{ query_table_name }} (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      name STRING,
+      created_at TIMESTAMPTZ DEFAULT now()
+    );
+
+  insert_sample: |
+    INSERT INTO {{ query_database_name }}.{{ query_table_name }} (name)
+    VALUES ('test_record');
+
+  select_all: |
+    SELECT * FROM {{ query_database_name }}.{{ query_table_name }};

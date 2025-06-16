@@ -4,30 +4,20 @@
   gather_facts: true
   become: false  # Set to true if you need privilege escalation
 
-  vars:
-    crdb_version: "latest"  # You can specify a specific version like "22.2.0"
-    crdb_cluster_name: "my-crdb-cluster"
-    crdb_secure_mode: "disable"  # Set to true for TLS/SSL security
-    crdb_listen_port: 26257
-    crdb_http_port: 8080
-    # crdb_join_addrs: []  # Empty for single node, add IPs for multi-node
-    # crdb_locality: "region=us-east,datacenter=dc1"
-    # crdb_certs_dir: "/var/lib/cockroach/certs"
-    # crdb_data_dir: "/var/lib/cockroach/data"
-    # crdb_log_dir: "/var/log/cockroach"
-    test_db: testdb
-    test_user: testuser
-    test_pwd: testpassword
-    test_table: users
-    test_index: idx_users_name
+  vars_files:
+    - vars/crdb_common.yml
+    - vars/crdb_setup.yml
+    # Uncomment the appropriate environment file:
+    - vars/environments/dev.yml
+    # - vars/environments/prod.yml
 
   tasks:
     # Basic connectivity and version check
     - name: Wait for CockroachDB to become available
       ansible.builtin.wait_for:
         port: "{{ crdb_listen_port }}"
-        delay: 10
-        timeout: 60
+        delay: "{{ crdb_wait_delay }}"
+        timeout: "{{ crdb_wait_timeout }}"
 
     - name: Check CockroachDB version
       ansible.builtin.command: cockroach version
@@ -42,22 +32,19 @@
 
     - name: Get CockroachDB info
       cockroach_labs.cockroachdb.cockroachdb_info:
-        host: localhost
-        # port: "{{ crdb_listen_port }}"
-        user: root
+        host: "{{ crdb_host }}"
+        user: "{{ crdb_user }}"
         ssl_mode: "{{ crdb_secure_mode }}"
         gather_subset: ['cluster', 'databases']
       register: crdb_info
 
     - name: Create a database
       cockroach_labs.cockroachdb.cockroachdb_db:
-        name: mydatabase
+        name: "{{ setup_database_name }}"
         state: present
-        host: localhost
-        user: root
-        # port: "{{ crdb_listen_port }}"
+        host: "{{ crdb_host }}"
+        user: "{{ crdb_user }}"
         ssl_mode: "{{ crdb_secure_mode }}"
-        # certs_dir: "{{ crdb_certs_dir if crdb_secure_mode else omit }}"
       register: db_creation
 
     - name: Display database creation result
@@ -66,13 +53,10 @@
 
     - name: Create database user
       cockroach_labs.cockroachdb.cockroachdb_user:
-        name: myuser
-        # password: "securepassword"  # Consider using ansible-vault for passwords
+        name: "{{ setup_user_name }}"
         state: present
-        host: localhost
-        # port: "{{ crdb_listen_port }}"
+        host: "{{ crdb_host }}"
         ssl_mode: "{{ crdb_secure_mode }}"
-        # certs_dir: "{{ crdb_certs_dir if crdb_secure_mode else omit }}"
       register: user_creation
 
     - name: Display user creation result
@@ -81,16 +65,13 @@
 
     - name: Grant privileges to user
       cockroach_labs.cockroachdb.cockroachdb_privilege:
-        roles: myuser
-        database: mydatabase
+        roles: "{{ setup_user_name }}"
+        database: "{{ setup_database_name }}"
         on_type: database
-        object_name: mydatabase
-        privileges: ["ALL"]
+        object_name: "{{ setup_database_name }}"
+        privileges: "{{ setup_privileges }}"
         state: grant
-        # host: "localhost"
-        # port: "{{ crdb_listen_port }}"
         ssl_mode: "{{ crdb_secure_mode }}"
-        # certs_dir: "{{ crdb_certs_dir if crdb_secure_mode else omit }}"
       register: grant_result
 
     - name: Display grant result
@@ -99,14 +80,8 @@
 
     - name: Set a cluster parameter
       cockroach_labs.cockroachdb.cockroachdb_parameter:
-        # profile: web_application
-        parameters:
-          sql.defaults.distsql: 'on'
-          sql.defaults.vectorize: 'on'
-          sql.distsql.temp_storage.workmem: '1GiB'
-          kv.snapshot_rebalance.max_rate: '64MiB'
-          kv.bulk_io_write.concurrent_addsstable_requests: 10
-          kv.bulk_io_write.max_rate: '512MiB'
+        profile: "revenue"
+        custom_profiles: "{{ cockroach_profiles }}"
         ssl_mode: "{{ crdb_secure_mode }}"
       register: parameter_result
 

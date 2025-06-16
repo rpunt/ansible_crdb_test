@@ -1,0 +1,19 @@
+---
+# Development Environment Variables
+# Override common variables for development environment
+
+# Development-specific overrides
+crdb_cluster_name: "dev-crdb-cluster"
+
+# Development database names
+setup_database_name: dev_database
+setup_user_name: dev_user
+
+# Development-specific parameters (less restrictive)
+cluster_parameters:
+  sql.defaults.distsql: 'on'
+  sql.defaults.vectorize: 'on'
+  sql.distsql.temp_storage.workmem: '512MiB'  # Less memory for dev
+  kv.snapshot_rebalance.max_rate: '32MiB'     # Lower rate for dev
+  kv.bulk_io_write.concurrent_addsstable_requests: 5  # Fewer concurrent requests
+  kv.bulk_io_write.max_rate: '256MiB'         # Lower rate for dev

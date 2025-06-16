@@ -1,0 +1,31 @@
+---
+# CockroachDB Common Configuration Variables
+# This file contains shared configuration used across multiple playbooks
+
+# CockroachDB Version and Cluster Settings
+crdb_version: "latest"  # You can specify a specific version like "22.2.0"
+crdb_cluster_name: "my-crdb-cluster"
+
+# Network Configuration
+crdb_listen_port: 26257
+crdb_http_port: 8080
+
+# Security Configuration
+crdb_secure_mode: "disable"  # Set to "require" or "enable" for TLS/SSL security
+
+# Multi-node Configuration (uncomment and configure for multi-node clusters)
+# crdb_join_addrs: []  # Empty for single node, add IPs for multi-node
+# crdb_locality: "region=us-east,datacenter=dc1"
+
+# Directory Configuration (uncomment and configure as needed)
+# crdb_certs_dir: "/var/lib/cockroach/certs"
+# crdb_data_dir: "/var/lib/cockroach/data"
+# crdb_log_dir: "/var/log/cockroach"
+
+# Connection Settings
+crdb_host: localhost
+crdb_user: root
+
+# Wait Settings
+crdb_wait_delay: 10
+crdb_wait_timeout: 60
