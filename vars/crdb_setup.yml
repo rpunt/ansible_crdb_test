@@ -19,9 +19,6 @@ cluster_parameters:
   kv.bulk_io_write.concurrent_addsstable_requests: 10
   kv.bulk_io_write.max_rate: '512MiB'
 
-# Profile selection
-revenue: revenue  # Options: revenue, task_service, or any custom profile name
-
 # Cluster parameter profiles
 cockroach_profiles:
   revenue:
