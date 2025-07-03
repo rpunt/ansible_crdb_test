@@ -31,7 +31,7 @@
       when: cockroach_version is success
 
     - name: Get CockroachDB info
-      cockroach_labs.cockroachdb.cockroachdb_info:
+      rpunt.cockroachdb.cockroachdb_info:
         host: "{{ crdb_host }}"
         user: "{{ crdb_user }}"
         ssl_mode: "{{ crdb_secure_mode }}"
@@ -39,7 +39,7 @@
       register: crdb_info
 
     - name: Create a database
-      cockroach_labs.cockroachdb.cockroachdb_db:
+      rpunt.cockroachdb.cockroachdb_db:
         name: "{{ setup_database_name }}"
         state: present
         host: "{{ crdb_host }}"
@@ -52,7 +52,7 @@
         var: db_creation
 
     - name: Create database user
-      cockroach_labs.cockroachdb.cockroachdb_user:
+      rpunt.cockroachdb.cockroachdb_user:
         name: "{{ setup_user_name }}"
         state: present
         host: "{{ crdb_host }}"
@@ -64,7 +64,7 @@
         var: user_creation
 
     - name: Grant privileges to user
-      cockroach_labs.cockroachdb.cockroachdb_privilege:
+      rpunt.cockroachdb.cockroachdb_privilege:
         roles: "{{ setup_user_name }}"
         database: "{{ setup_database_name }}"
         on_type: database
@@ -79,7 +79,7 @@
         var: grant_result
 
     - name: Set a cluster parameter
-      cockroach_labs.cockroachdb.cockroachdb_parameter:
+      rpunt.cockroachdb.cockroachdb_parameter:
         profile: "revenue"
         custom_profiles: "{{ cockroach_profiles }}"
         ssl_mode: "{{ crdb_secure_mode }}"

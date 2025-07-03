@@ -20,7 +20,7 @@
         timeout: "{{ crdb_wait_timeout }}"
 
     - name: Execute SQL statements
-      cockroach_labs.cockroachdb.cockroachdb_query:
+      rpunt.cockroachdb.cockroachdb_query:
         host: "{{ crdb_host }}"
         ssl_mode: "{{ crdb_secure_mode }}"
         database: "{{ query_database_name }}"

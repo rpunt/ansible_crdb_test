@@ -2,4 +2,4 @@
 # This file is for reference only when the collection is published to Ansible Galaxy
 # When developing locally, use the install_local_collection.sh script instead
 collections:
-  - cockroach_labs.cockroachdb
+  - rpunt.cockroachdb
